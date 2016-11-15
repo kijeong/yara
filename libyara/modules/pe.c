@@ -1875,8 +1875,8 @@ define_function(calculate_checksum)
 
   csum_offset = ((uint8_t*) &(pe->header->OptionalHeader) +
       offsetof(IMAGE_OPTIONAL_HEADER32, CheckSum)) - pe->data;
-
-  for (int i = 0; i <= pe->data_size / 4; i++)
+  int i = 0;
+  for (i = 0; i <= pe->data_size / 4; i++)
   {
     // Treat the CheckSum field as 0 -- the offset is the same for
     // PE32 and PE64.
@@ -1893,7 +1893,8 @@ define_function(calculate_checksum)
     }
     else
     {
-      for (int j = 0; j < pe->data_size % 4; j++)
+      int j = 0;
+      for (j = 0; j < pe->data_size % 4; j++)
         csum += (uint64_t) pe->data[4 * i + j] << (8 * j);
     }
 
