@@ -33,9 +33,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <config.h>
 
 #if defined(__GNUC__)
-#define yr_bswap16(x) __builtin_bswap16(x)
-#define yr_bswap32(x) __builtin_bswap32(x)
-#define yr_bswap64(x) __builtin_bswap64(x)
+    #if __GNUC__ == 4 && __GNUC_MINOR__ == 4
+        #define yr_bswap16(x) ((((x) & 0xff) << 8) | ((x) >> 8)) 
+        #define yr_bswap32(x) (((uint32_t)yr_bswap16((uint16_t)((x) & 0xffff)) << 16) | (uint32_t)yr_bswap16((uint16_t)((x) >> 16)))
+        #define yr_bswap64(x) (((uint64_t)yr_bswap32((uint32_t)((x) & 0xffffffff)) << 32) | (uint64_t)yr_bswap32((uint32_t)((x) >> 32)))
+    #else
+        #define yr_bswap16(x) __builtin_bswap16(x)
+        #define yr_bswap32(x) __builtin_bswap32(x)
+        #define yr_bswap64(x) __builtin_bswap64(x)
+    #endif
 #elif defined(_MSC_VER)
 #define yr_bswap16(x) _byteswap_ushort(x)
 #define yr_bswap32(x) _byteswap_ulong(x)
